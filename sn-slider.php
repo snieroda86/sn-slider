@@ -26,13 +26,26 @@ if( ! class_exists('SN_Slider')){
 			add_action('admin_menu' , array($this , 'create_admin_menu') );
 			// creste post type
 			require_once(SN_SLIDER_PATH.'/post-types/class.sn-slider-cpt.php');
-			$post_types = new SN_Slider_Post_Type();
+			$SN_Slider_Post_Type = new SN_Slider_Post_Type();
+
+			// creste settings
+			require_once(SN_SLIDER_PATH.'/class.sn-slider-settings.php');
+			$SN_Slider_Settings = new SN_Slider_Settings();
+
+			// slider shortcode
+			require_once(SN_SLIDER_PATH.'/shortcodes/class.sn-slider-shortcode.php');
+			$SN_Slider_Shortcode = new SN_Slider_Shortcode();
+
+			// Enqueue scripts
+			add_action('wp_enqueue_scripts' , array($this , 'register_scripts'),999 );
+
+			
 		}
 
 		// Constans
 		public function define_constants(){
 			define('SN_SLIDER_PATH' , plugin_dir_path( __FILE__ ));
-			define('SN_SLIDER_URL' , plugin_dir_path(__FILE__));
+			define('SN_SLIDER_URL' , plugin_dir_url(__FILE__));
 			define('SN_SLIDER_VERSION' , '1.0.0');
 		}
 
@@ -89,7 +102,26 @@ if( ! class_exists('SN_Slider')){
 
 		// Admin settings page callback
 		public function sn_slider_settings_page(){
+			if( ! current_user_can( 'manage_options' )){
+				return;
+			}
+			// Messages
+			if(isset($_GET['settings-updated'])){
+				add_settings_error( 'sn_slider_options', 'sn_slider_message' , 'Settings Saved' , 'success' );
+			}
+			// Display messages
+			settings_errors('sn_slider_options');
 			require (SN_SLIDER_PATH.'/views/settings-page.php');
+		}
+
+		// Regitser scripts
+		public function register_scripts(){
+			// JS files
+			wp_register_script( 'sn-slider-main-jq', SN_SLIDER_URL.'vendor/flex-slider/jquery.flexslider-min.js' , array('jquery'), SN_SLIDER_VERSION , true );
+			wp_register_script( 'sn-slider-options-js', SN_SLIDER_URL.'vendor/flex-slider/flexslider.js' , array('jquery'), SN_SLIDER_VERSION , true );
+			// CSS files
+			wp_register_style( 'sn-slider-main-css', SN_SLIDER_URL.'vendor/flex-slider/flexslider.css' , array() , SN_SLIDER_VERSION , 'all' );
+			wp_register_style( 'sn-slider-style-css', SN_SLIDER_URL.'assets/css/frontend.css' , array() , SN_SLIDER_VERSION , 'all' );
 		}
 
 
