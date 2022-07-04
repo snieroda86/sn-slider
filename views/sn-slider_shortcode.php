@@ -1,7 +1,7 @@
 
 <h3><?php echo(!empty($content)) ? esc_html($content) : esc_html( SN_Slider_Settings::$options['sn_slider_title'] );   ?></h3>
 
-<div class="flexslider sn-slider">
+<div class="flexslider sn-slider <?php echo(isset( SN_Slider_Settings::$options['sn_slider_style'])) ? esc_attr(SN_Slider_Settings::$options['sn_slider_style']) : 'style-1';  ?>">
   <ul class="slides">
   	<?php 
   	$args = array(
@@ -18,7 +18,13 @@
   			$button_link = get_post_meta( get_the_ID(), 'sn_slider_link_url', true );
   			?>
   			 <li>
-  			 	<?php the_post_thumbnail('full' , ['class'=> 'img-fluid']); ?>
+  			 	<?php 
+          if(has_post_thumbnail()){
+            the_post_thumbnail('full' , ['class'=> 'img-fluid']);   
+          }else{ ?>
+            <img src="<?php echo SN_SLIDER_URL.'assets/images/default.jpg' ?>" alt="Placeholder image" class="img-fluid wp-post-image">
+          <?php } ?>
+          
 		      <div class="sns-container">
 		      	<div class="sn-slide-details-container">
 		      		<div class="wrapper">

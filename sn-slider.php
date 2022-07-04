@@ -22,6 +22,9 @@ if( ! class_exists('SN_Slider')){
 	class SN_Slider{
 		public function __construct(){
 			$this->define_constants();
+
+			// Functions
+			require_once(SN_SLIDER_PATH.'functions/functions.php');
 			// Create admin menu
 			add_action('admin_menu' , array($this , 'create_admin_menu') );
 			// creste post type
@@ -38,6 +41,9 @@ if( ! class_exists('SN_Slider')){
 
 			// Enqueue scripts
 			add_action('wp_enqueue_scripts' , array($this , 'register_scripts'),999 );
+
+			// Admin scripts
+			add_action('admin_enqueue_scripts' , array($this, 'register_admin_scripts'));
 
 			
 		}
@@ -118,10 +124,19 @@ if( ! class_exists('SN_Slider')){
 		public function register_scripts(){
 			// JS files
 			wp_register_script( 'sn-slider-main-jq', SN_SLIDER_URL.'vendor/flex-slider/jquery.flexslider-min.js' , array('jquery'), SN_SLIDER_VERSION , true );
-			wp_register_script( 'sn-slider-options-js', SN_SLIDER_URL.'vendor/flex-slider/flexslider.js' , array('jquery'), SN_SLIDER_VERSION , true );
+			
 			// CSS files
 			wp_register_style( 'sn-slider-main-css', SN_SLIDER_URL.'vendor/flex-slider/flexslider.css' , array() , SN_SLIDER_VERSION , 'all' );
 			wp_register_style( 'sn-slider-style-css', SN_SLIDER_URL.'assets/css/frontend.css' , array() , SN_SLIDER_VERSION , 'all' );
+		}
+
+		// Admin scripts
+		public function register_admin_scripts(){
+			global $typenow;
+			if($typenow =='sn_slider'){
+				wp_enqueue_style( 'sn-slider-admin-style', SN_SLIDER_URL.'assets/css/admin.css' , array() , SN_SLIDER_VERSION , 'all' );	
+			}
+			
 		}
 
 
